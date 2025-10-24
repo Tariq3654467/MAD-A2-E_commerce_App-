@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "E-Commerce Shop",
+    "slug": "ecommerce-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#008060"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ecommerce.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#008060"
+      },
+      "package": "com.ecommerce.app"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "name": "E-Commerce Shop",
+      "shortName": "Shop",
+      "description": "Modern E-Commerce Shopping App with Shopify-inspired design",
+      "themeColor": "#008060",
+      "backgroundColor": "#FFFFFF",
+      "display": "standalone",
+      "startUrl": "/",
+      "bundler": "metro"
+    }
+  }
+}
