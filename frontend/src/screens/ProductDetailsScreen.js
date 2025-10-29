@@ -84,8 +84,13 @@ const ProductDetailsScreen = ({ route, navigation }) => {
           <View style={styles.imageContainer}>
             <Image source={{ uri: product.image_url }} style={styles.productImage} />
             {product.stock < 10 && product.stock > 0 && (
-              <View style={styles.lowStockBadge}>
+              <Animatable.View animation="pulse" iterationCount="infinite" style={styles.lowStockBadge}>
                 <Text style={styles.lowStockText}>Only {product.stock} left!</Text>
+              </Animatable.View>
+            )}
+            {product.stock === 0 && (
+              <View style={styles.outOfStockOverlay}>
+                <Text style={styles.outOfStockText}>Out of Stock</Text>
               </View>
             )}
           </View>
@@ -109,14 +114,18 @@ const ProductDetailsScreen = ({ route, navigation }) => {
           <Text style={styles.productName}>{product.name}</Text>
           
           <View style={styles.priceSection}>
-            <Text style={styles.productPrice}>${product.price.toFixed(2)}</Text>
+            <View>
+              <Text style={styles.productPrice}>${product.price.toFixed(2)}</Text>
+              <Text style={styles.priceLabel}>Price</Text>
+            </View>
             <Chip 
-              mode="outlined"
+              mode="flat"
               style={[
                 styles.stockChip,
                 product.stock > 0 ? styles.inStock : styles.outOfStock
               ]}
               textStyle={styles.stockChipText}
+              icon={product.stock > 0 ? "check-circle" : "alert-circle"}
             >
               {product.stock > 0 ? `In Stock (${product.stock})` : 'Out of Stock'}
             </Chip>
@@ -213,8 +222,9 @@ const ProductDetailsScreen = ({ route, navigation }) => {
             contentStyle={styles.addToCartButtonContent}
             labelStyle={styles.addToCartButtonLabel}
             icon="cart-plus"
+            buttonColor={product.stock === 0 ? colors.textLight : colors.primary}
           >
-            Add to Cart
+            {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
           </Button>
         </View>
       </View>
@@ -270,7 +280,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: borderRadius.md,
-    ...colors.shadow,
+    ...colors.shadowMedium,
+    elevation: 4,
+  },
+  outOfStockOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  outOfStockText: {
+    ...typography.h3,
+    color: colors.surface,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
   },
   lowStockText: {
     ...typography.caption,
@@ -326,9 +353,16 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   productPrice: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: 'bold',
     color: colors.primary,
+    marginBottom: spacing.xs,
+  },
+  priceLabel: {
+    ...typography.caption,
+    color: colors.textSecondary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   stockChip: {
     borderRadius: borderRadius.md,
@@ -482,7 +516,13 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.divider,
     padding: spacing.lg,
-    ...colors.shadow,
+    ...colors.shadowMedium,
+  },
+  addToCartButton: {
+    borderRadius: borderRadius.md,
+    marginLeft: spacing.md,
+    ...colors.shadowMedium,
+    elevation: 4,
   },
   footerContent: {
     flexDirection: 'row',

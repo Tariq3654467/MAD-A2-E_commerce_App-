@@ -221,17 +221,18 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: colors.surface,
-    paddingTop: spacing.md,
+    paddingTop: spacing.lg,
     paddingHorizontal: spacing.md,
-    paddingBottom: spacing.sm,
-    ...colors.shadow,
-    elevation: 2,
+    paddingBottom: spacing.md,
+    ...colors.shadowMedium,
+    elevation: 3,
   },
   searchBar: {
     marginBottom: spacing.md,
     backgroundColor: colors.background,
     borderRadius: borderRadius.lg,
     elevation: 0,
+    ...colors.shadow,
   },
   searchInput: {
     ...typography.body,
@@ -273,8 +274,8 @@ const styles = StyleSheet.create({
   },
   productCard: {
     borderRadius: borderRadius.lg,
-    ...colors.shadow,
-    elevation: 3,
+    ...colors.shadowMedium,
+    elevation: 4,
     backgroundColor: colors.surface,
     overflow: 'hidden',
   },

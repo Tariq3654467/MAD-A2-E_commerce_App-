@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
 import { Text, TextInput, Button, RadioButton, Card, Snackbar } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
 import { orderAPI } from '../services/api';
@@ -180,8 +180,6 @@ const CheckoutScreen = ({ route, navigation }) => {
   );
 };
 
-import { TouchableOpacity } from 'react-native';
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -205,8 +203,9 @@ const styles = StyleSheet.create({
   card: {
     marginBottom: spacing.lg,
     borderRadius: borderRadius.lg,
-    ...colors.shadow,
-    elevation: 2,
+    ...colors.shadowMedium,
+    elevation: 3,
+    backgroundColor: colors.surface,
   },
   cardContent: {
     padding: spacing.lg,
@@ -308,6 +307,8 @@ const styles = StyleSheet.create({
   placeOrderButton: {
     borderRadius: borderRadius.md,
     marginBottom: spacing.xl,
+    ...colors.shadowMedium,
+    elevation: 4,
   },
   placeOrderButtonContent: {
     paddingVertical: spacing.md,

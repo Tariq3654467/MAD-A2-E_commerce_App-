@@ -12,22 +12,24 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
 const getApiUrl = () => {
-  // 🔥 FOR SNACK EXPO: Replace with your ngrok URL
-  // Get this from: ngrok terminal output OR http://127.0.0.1:4040
-  // Should look like: 'https://1a2b-3c4d.ngrok-free.app/api'
-  const NGROK_URL = 'https://unballoted-bernard-extracellular.ngrok-free.dev/api'; // ⬅️ Paste your ngrok HTTPS URL here + '/api'
-  
-  // If running on Snack Expo, use ngrok URL
+  // 🔥 Optional: set only for mobile if you are tunneling
+  const NGROK_URL = '';// e.g. 'https://xxxx.ngrok-free.app/api' (will NOT be used on web)
+
+  // Always use localhost on web
+  if (Platform.OS === 'web') {
+    return 'http://localhost:3000/api';
+  }
+
+  // For native (android/ios), prefer ngrok if provided
   if (NGROK_URL && NGROK_URL.startsWith('https://')) {
     return NGROK_URL;
   }
-  
-  // Local development URLs
-  if (Platform.OS === 'web') {
-    return 'http://localhost:3000/api';
-  } else if (Platform.OS === 'android') {
-    return 'http://192.168.1.104:3000/api ';
-  } else if (Platform.OS === 'ios') {
+
+  // Local development URLs for native
+  if (Platform.OS === 'android') {
+    return 'http://192.168.1.104:3000/api';
+  }
+  if (Platform.OS === 'ios') {
     return 'http://localhost:3000/api';
   }
   return 'http://localhost:3000/api';

@@ -60,14 +60,16 @@ const CartScreen = ({ navigation }) => {
 
     return (
       <Animatable.View animation="fadeInUp" delay={index * 100}>
-        <Card style={styles.cartCard}>
+        <Card style={styles.cartCard} elevation={2}>
           <View style={styles.cartItemContainer}>
-            <Image source={{ uri: product.image_url }} style={styles.productImage} />
+            <View style={styles.imageWrapper}>
+              <Image source={{ uri: product.image_url }} style={styles.productImage} />
+            </View>
             
             <View style={styles.productInfo}>
               <Text style={styles.productCategory}>{product.category}</Text>
               <Text style={styles.productName} numberOfLines={2}>{product.name}</Text>
-              <Text style={styles.productPrice}>${product.price.toFixed(2)}</Text>
+              <Text style={styles.productPrice}>${product.price.toFixed(2)} each</Text>
               
               <View style={styles.quantityContainer}>
                 <TouchableOpacity
@@ -86,8 +88,13 @@ const CartScreen = ({ navigation }) => {
                   <Text style={styles.quantityText}>{item.quantity}</Text>
                 </View>
                 <TouchableOpacity
-                  style={styles.quantityButton}
-                  onPress={() => updateCartItem(item._id, item.quantity + 1)}
+                  style={[styles.quantityButton, product.stock <= item.quantity && styles.quantityButtonDisabled]}
+                  onPress={() => {
+                    if (product.stock > item.quantity) {
+                      updateCartItem(item._id, item.quantity + 1);
+                    }
+                  }}
+                  disabled={product.stock <= item.quantity}
                   activeOpacity={0.7}
                 >
                   <Text style={styles.quantityButtonText}>+</Text>
@@ -96,6 +103,11 @@ const CartScreen = ({ navigation }) => {
             </View>
 
             <View style={styles.actionContainer}>
+              <View style={styles.totalPriceContainer}>
+                <Text style={styles.itemTotal}>
+                  ${(product.price * item.quantity).toFixed(2)}
+                </Text>
+              </View>
               <IconButton
                 icon="delete-outline"
                 iconColor={colors.error}
@@ -103,11 +115,6 @@ const CartScreen = ({ navigation }) => {
                 onPress={() => removeFromCart(item._id)}
                 style={styles.deleteButton}
               />
-              <View style={styles.totalPriceContainer}>
-                <Text style={styles.itemTotal}>
-                  ${(product.price * item.quantity).toFixed(2)}
-                </Text>
-              </View>
             </View>
           </View>
         </Card>
@@ -129,16 +136,20 @@ const CartScreen = ({ navigation }) => {
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
-          <View style={styles.headerContainer}>
-            <Text style={styles.headerTitle}>Shopping Cart</Text>
-            <Text style={styles.headerSubtitle}>{cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}</Text>
-          </View>
+          <Animatable.View animation="fadeInDown">
+            <View style={styles.headerContainer}>
+              <Text style={styles.headerTitle}>Shopping Cart</Text>
+              <Text style={styles.headerSubtitle}>{cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}</Text>
+            </View>
+          </Animatable.View>
         }
         ListFooterComponent={
           <Animatable.View animation="fadeInUp" delay={300}>
-            <Card style={styles.summaryCard}>
+            <Card style={styles.summaryCard} elevation={2}>
               <Card.Content style={styles.summaryContent}>
-                <Text style={styles.summaryTitle}>Order Summary</Text>
+                <View style={styles.summaryHeader}>
+                  <Text style={styles.summaryTitle}>Order Summary</Text>
+                </View>
                 
                 <View style={styles.summaryRow}>
                   <Text style={styles.summaryLabel}>Subtotal</Text>
@@ -248,12 +259,18 @@ const styles = StyleSheet.create({
   cartCard: {
     marginBottom: spacing.md,
     borderRadius: borderRadius.lg,
-    ...colors.shadow,
-    elevation: 2,
+    ...colors.shadowMedium,
+    elevation: 3,
+    backgroundColor: colors.surface,
   },
   cartItemContainer: {
     flexDirection: 'row',
     padding: spacing.md,
+  },
+  imageWrapper: {
+    borderRadius: borderRadius.md,
+    overflow: 'hidden',
+    backgroundColor: colors.background,
   },
   productImage: {
     width: 100,
@@ -317,16 +334,19 @@ const styles = StyleSheet.create({
   actionContainer: {
     alignItems: 'flex-end',
     justifyContent: 'space-between',
-    marginLeft: spacing.sm,
+    marginLeft: spacing.md,
+    minWidth: 80,
   },
   deleteButton: {
     margin: 0,
+    marginTop: spacing.sm,
   },
   totalPriceContainer: {
     backgroundColor: colors.primary + '15',
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: borderRadius.md,
+    marginBottom: spacing.sm,
   },
   itemTotal: {
     fontSize: 18,
@@ -336,16 +356,23 @@ const styles = StyleSheet.create({
   summaryCard: {
     marginTop: spacing.md,
     borderRadius: borderRadius.lg,
-    ...colors.shadow,
-    elevation: 2,
+    ...colors.shadowMedium,
+    elevation: 3,
+    backgroundColor: colors.surface,
   },
   summaryContent: {
     padding: spacing.lg,
   },
+  summaryHeader: {
+    marginBottom: spacing.lg,
+    paddingBottom: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
   summaryTitle: {
     ...typography.h3,
     color: colors.text,
-    marginBottom: spacing.lg,
+    fontWeight: '700',
   },
   summaryRow: {
     flexDirection: 'row',

@@ -1,9 +1,11 @@
 import React, { useState, useContext } from 'react';
-import { View, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
-import { TextInput, Button, Text, Snackbar } from 'react-native-paper';
+import { View, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Dimensions } from 'react-native';
+import { TextInput, Button, Text, Snackbar, Surface } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
 import { AuthContext } from '../context/AuthContext';
 import { colors, spacing, borderRadius, typography } from '../theme/colors';
+
+const { width } = Dimensions.get('window');
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -55,74 +57,92 @@ const LoginScreen = ({ navigation }) => {
       >
         <Animatable.View animation="fadeIn" style={styles.content}>
           {/* Logo Area */}
-          <View style={styles.logoContainer}>
+          <Animatable.View animation="fadeInDown" delay={100} style={styles.logoContainer}>
             <View style={styles.logoCircle}>
               <Text style={styles.logoText}>🛍️</Text>
             </View>
             <Text style={styles.title}>Welcome back</Text>
             <Text style={styles.subtitle}>Sign in to continue shopping</Text>
-          </View>
+          </Animatable.View>
 
           {/* Form */}
-          <View style={styles.form}>
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-              value={email}
-              onChangeText={setEmail}
-              mode="outlined"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-              style={styles.input}
-              outlineColor={colors.border}
-              activeOutlineColor={colors.primary}
-              placeholder="you@example.com"
-              theme={{ roundness: borderRadius.md }}
-            />
+          <Animatable.View animation="fadeInUp" delay={200}>
+            <Surface style={styles.formContainer} elevation={0}>
+              <View style={styles.form}>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Email</Text>
+                  <TextInput
+                    value={email}
+                    onChangeText={setEmail}
+                    mode="outlined"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    style={styles.input}
+                    outlineColor={colors.border}
+                    activeOutlineColor={colors.primary}
+                    placeholder="you@example.com"
+                    placeholderTextColor={colors.textLight}
+                    theme={{ roundness: borderRadius.md, colors: { onSurface: colors.text, text: colors.text } }}
+                    contentStyle={{ color: colors.text }}
+                    left={<TextInput.Icon icon="email" color={colors.textLight} />}
+                    error={!!error && error.toLowerCase().includes('email')}
+                  />
+                </View>
 
-            <Text style={styles.label}>Password</Text>
-            <TextInput
-              value={password}
-              onChangeText={setPassword}
-              mode="outlined"
-              secureTextEntry={!showPassword}
-              style={styles.input}
-              outlineColor={colors.border}
-              activeOutlineColor={colors.primary}
-              placeholder="Enter your password"
-              theme={{ roundness: borderRadius.md }}
-              right={<TextInput.Icon 
-                icon={showPassword ? "eye-off" : "eye"} 
-                onPress={() => setShowPassword(!showPassword)}
-                color={colors.textLight}
-              />}
-            />
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Password</Text>
+                  <TextInput
+                    value={password}
+                    onChangeText={setPassword}
+                    mode="outlined"
+                    secureTextEntry={!showPassword}
+                    style={styles.input}
+                    outlineColor={colors.border}
+                    activeOutlineColor={colors.primary}
+                    placeholder="Enter your password"
+                    placeholderTextColor={colors.textLight}
+                    theme={{ roundness: borderRadius.md, colors: { onSurface: colors.text, text: colors.text } }}
+                    contentStyle={{ color: colors.text }}
+                    left={<TextInput.Icon icon="lock" color={colors.textLight} />}
+                    right={<TextInput.Icon 
+                      icon={showPassword ? "eye-off" : "eye"} 
+                      onPress={() => setShowPassword(!showPassword)}
+                      color={colors.textLight}
+                    />}
+                  />
+                </View>
 
-            <Button
-              mode="contained"
-              onPress={handleLogin}
-              loading={loading}
-              disabled={loading}
-              style={styles.button}
-              contentStyle={styles.buttonContent}
-              labelStyle={styles.buttonLabel}
-              buttonColor={colors.primary}
-            >
-              Sign in
-            </Button>
+                <Button
+                  mode="contained"
+                  onPress={handleLogin}
+                  loading={loading}
+                  disabled={loading}
+                  style={styles.button}
+                  contentStyle={styles.buttonContent}
+                  labelStyle={styles.buttonLabel}
+                  buttonColor={colors.primary}
+                  textColor={colors.surface}
+                  icon="login"
+                >
+                  Sign in
+                </Button>
 
-            <View style={styles.registerContainer}>
-              <Text style={styles.registerText}>Don't have an account? </Text>
-              <Button
-                mode="text"
-                onPress={() => navigation.navigate('Register')}
-                labelStyle={styles.registerLink}
-                compact
-              >
-                Sign up
-              </Button>
-            </View>
-          </View>
+                <View style={styles.registerContainer}>
+                  <Text style={styles.registerText}>Don't have an account? </Text>
+                  <Button
+                    mode="text"
+                    onPress={() => navigation.navigate('Register')}
+                    labelStyle={styles.registerLink}
+                    compact
+                    textColor={colors.primary}
+                  >
+                    Sign up
+                  </Button>
+                </View>
+              </View>
+            </Surface>
+          </Animatable.View>
         </Animatable.View>
       </ScrollView>
 
@@ -145,60 +165,79 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.background,
   },
   scrollView: {
     flexGrow: 1,
     justifyContent: 'center',
+    paddingVertical: spacing.md,
   },
   content: {
-    padding: spacing.xl,
+    padding: spacing.md,
+    paddingTop: spacing.lg,
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: spacing.xxl,
+    marginBottom: spacing.md,
   },
   logoCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 70,
+    height: 70,
+    borderRadius: 35,
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: spacing.lg,
+    marginBottom: spacing.sm,
     ...colors.shadowMedium,
   },
   logoText: {
-    fontSize: 40,
+    fontSize: 36,
   },
   title: {
-    ...typography.h1,
+    ...typography.h2,
     color: colors.text,
-    marginBottom: spacing.xs,
+    marginBottom: spacing.xs / 2,
     textAlign: 'center',
+    fontWeight: '700',
+    fontSize: 24,
   },
   subtitle: {
     ...typography.body,
     color: colors.textSecondary,
     textAlign: 'center',
+    fontSize: 14,
+  },
+  formContainer: {
+    borderRadius: borderRadius.lg,
+    backgroundColor: colors.surface,
+    padding: spacing.md,
+    ...colors.shadowMedium,
   },
   form: {
     width: '100%',
   },
+  inputGroup: {
+    marginBottom: spacing.sm,
+  },
   label: {
     ...typography.bodyMedium,
     color: colors.text,
-    marginBottom: spacing.sm,
-    marginTop: spacing.md,
+    marginBottom: spacing.xs,
+    fontWeight: '600',
+    fontSize: 14,
   },
   input: {
-    marginBottom: spacing.sm,
     backgroundColor: colors.surface,
+    fontSize: 15,
+    marginBottom: 0,
+    color: colors.text,
   },
   button: {
-    marginTop: spacing.xl,
+    marginTop: spacing.md,
     borderRadius: borderRadius.md,
     ...colors.shadowMedium,
+    elevation: 4,
+    alignSelf: 'stretch',
   },
   buttonContent: {
     paddingVertical: spacing.sm,
@@ -206,23 +245,30 @@ const styles = StyleSheet.create({
   buttonLabel: {
     ...typography.bodyMedium,
     fontSize: 16,
+    fontWeight: '600',
+    letterSpacing: 0.3,
   },
   registerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: spacing.xl,
+    marginTop: spacing.md,
+    paddingTop: spacing.sm,
   },
   registerText: {
     ...typography.body,
     color: colors.textSecondary,
+    fontSize: 13,
   },
   registerLink: {
     ...typography.bodyMedium,
     color: colors.primary,
+    fontWeight: '600',
+    fontSize: 13,
   },
   snackbar: {
     backgroundColor: colors.error,
+    marginBottom: spacing.xl,
   },
 });
 

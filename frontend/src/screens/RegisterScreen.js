@@ -1,9 +1,11 @@
 import React, { useState, useContext } from 'react';
-import { View, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
-import { TextInput, Button, Text, Snackbar, HelperText } from 'react-native-paper';
+import { View, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Alert, Dimensions } from 'react-native';
+import { TextInput, Button, Text, Snackbar, HelperText, Surface } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
 import { AuthContext } from '../context/AuthContext';
 import { colors, spacing, borderRadius, typography } from '../theme/colors';
+
+const { width } = Dimensions.get('window');
 
 const RegisterScreen = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -102,139 +104,174 @@ const RegisterScreen = ({ navigation }) => {
       >
         <Animatable.View animation="fadeIn" style={styles.content}>
           {/* Header */}
-          <View style={styles.header}>
+          <Animatable.View animation="fadeInDown" delay={100} style={styles.header}>
+            <View style={styles.logoContainer}>
+              <Text style={styles.logoEmoji}>🛒</Text>
+            </View>
             <Text style={styles.title}>Create your account</Text>
             <Text style={styles.subtitle}>Start your shopping journey today</Text>
-          </View>
+          </Animatable.View>
 
           {/* Form */}
-          <View style={styles.form}>
-            <Text style={styles.label}>Full name <Text style={styles.required}>*</Text></Text>
-            <TextInput
-              value={name}
-              onChangeText={(text) => {
-                setName(text);
-                setFieldErrors({ ...fieldErrors, name: null });
-              }}
-              mode="outlined"
-              style={styles.input}
-              outlineColor={fieldErrors.name ? colors.error : colors.border}
-              activeOutlineColor={colors.primary}
-              placeholder="John Doe"
-              theme={{ roundness: borderRadius.md }}
-              error={!!fieldErrors.name}
-            />
-            {fieldErrors.name && (
-              <HelperText type="error" visible={!!fieldErrors.name}>
-                {fieldErrors.name}
-              </HelperText>
-            )}
+          <Animatable.View animation="fadeInUp" delay={200}>
+            <Surface style={styles.formContainer} elevation={0}>
+              <View style={styles.form}>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Full name <Text style={styles.required}>*</Text></Text>
+                  <TextInput
+                    value={name}
+                    onChangeText={(text) => {
+                      setName(text);
+                      setFieldErrors({ ...fieldErrors, name: null });
+                    }}
+                    mode="outlined"
+                    style={styles.input}
+                    outlineColor={fieldErrors.name ? colors.error : colors.border}
+                    activeOutlineColor={colors.primary}
+                    placeholder="John Doe"
+                    placeholderTextColor={colors.textLight}
+                    theme={{ roundness: borderRadius.md, colors: { onSurface: colors.text, text: colors.text } }}
+                    contentStyle={{ color: colors.text }}
+                    error={!!fieldErrors.name}
+                    left={<TextInput.Icon icon="account" color={colors.textLight} />}
+                  />
+                  {fieldErrors.name && (
+                    <HelperText type="error" visible={!!fieldErrors.name}>
+                      {fieldErrors.name}
+                    </HelperText>
+                  )}
+                </View>
 
-            <Text style={styles.label}>Email <Text style={styles.required}>*</Text></Text>
-            <TextInput
-              value={email}
-              onChangeText={(text) => {
-                setEmail(text);
-                setFieldErrors({ ...fieldErrors, email: null });
-              }}
-              mode="outlined"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-              style={styles.input}
-              outlineColor={fieldErrors.email ? colors.error : colors.border}
-              activeOutlineColor={colors.primary}
-              placeholder="you@example.com"
-              theme={{ roundness: borderRadius.md }}
-              error={!!fieldErrors.email}
-            />
-            {fieldErrors.email && (
-              <HelperText type="error" visible={!!fieldErrors.email}>
-                {fieldErrors.email}
-              </HelperText>
-            )}
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Email <Text style={styles.required}>*</Text></Text>
+                  <TextInput
+                    value={email}
+                    onChangeText={(text) => {
+                      setEmail(text);
+                      setFieldErrors({ ...fieldErrors, email: null });
+                    }}
+                    mode="outlined"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    style={styles.input}
+                    outlineColor={fieldErrors.email ? colors.error : colors.border}
+                    activeOutlineColor={colors.primary}
+                    placeholder="you@example.com"
+                    placeholderTextColor={colors.textLight}
+                    theme={{ roundness: borderRadius.md, colors: { onSurface: colors.text, text: colors.text } }}
+                    contentStyle={{ color: colors.text }}
+                    error={!!fieldErrors.email}
+                    left={<TextInput.Icon icon="email" color={colors.textLight} />}
+                  />
+                  {fieldErrors.email && (
+                    <HelperText type="error" visible={!!fieldErrors.email}>
+                      {fieldErrors.email}
+                    </HelperText>
+                  )}
+                </View>
 
-            <Text style={styles.label}>Password <Text style={styles.required}>*</Text></Text>
-            <TextInput
-              value={password}
-              onChangeText={(text) => {
-                setPassword(text);
-                setFieldErrors({ ...fieldErrors, password: null });
-              }}
-              mode="outlined"
-              secureTextEntry={!showPassword}
-              style={styles.input}
-              outlineColor={fieldErrors.password ? colors.error : colors.border}
-              activeOutlineColor={colors.primary}
-              placeholder="At least 6 characters"
-              theme={{ roundness: borderRadius.md }}
-              error={!!fieldErrors.password}
-              right={<TextInput.Icon 
-                icon={showPassword ? "eye-off" : "eye"} 
-                onPress={() => setShowPassword(!showPassword)}
-                color={colors.textLight}
-              />}
-            />
-            {fieldErrors.password && (
-              <HelperText type="error" visible={!!fieldErrors.password}>
-                {fieldErrors.password}
-              </HelperText>
-            )}
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Password <Text style={styles.required}>*</Text></Text>
+                  <TextInput
+                    value={password}
+                    onChangeText={(text) => {
+                      setPassword(text);
+                      setFieldErrors({ ...fieldErrors, password: null });
+                    }}
+                    mode="outlined"
+                    secureTextEntry={!showPassword}
+                    style={styles.input}
+                    outlineColor={fieldErrors.password ? colors.error : colors.border}
+                    activeOutlineColor={colors.primary}
+                    placeholder="At least 6 characters"
+                    placeholderTextColor={colors.textLight}
+                    theme={{ roundness: borderRadius.md, colors: { onSurface: colors.text, text: colors.text } }}
+                    contentStyle={{ color: colors.text }}
+                    error={!!fieldErrors.password}
+                    left={<TextInput.Icon icon="lock" color={colors.textLight} />}
+                    right={<TextInput.Icon 
+                      icon={showPassword ? "eye-off" : "eye"} 
+                      onPress={() => setShowPassword(!showPassword)}
+                      color={colors.textLight}
+                    />}
+                  />
+                  {fieldErrors.password && (
+                    <HelperText type="error" visible={!!fieldErrors.password}>
+                      {fieldErrors.password}
+                    </HelperText>
+                  )}
+                </View>
 
-            <Text style={styles.label}>Phone number</Text>
-            <TextInput
-              value={phone}
-              onChangeText={setPhone}
-              mode="outlined"
-              keyboardType="phone-pad"
-              style={styles.input}
-              outlineColor={colors.border}
-              activeOutlineColor={colors.primary}
-              placeholder="(555) 123-4567"
-              theme={{ roundness: borderRadius.md }}
-            />
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Phone number</Text>
+                  <TextInput
+                    value={phone}
+                    onChangeText={setPhone}
+                    mode="outlined"
+                    keyboardType="phone-pad"
+                    style={styles.input}
+                    outlineColor={colors.border}
+                    activeOutlineColor={colors.primary}
+                    placeholder="(555) 123-4567"
+                    placeholderTextColor={colors.textLight}
+                    theme={{ roundness: borderRadius.md, colors: { onSurface: colors.text, text: colors.text } }}
+                    contentStyle={{ color: colors.text }}
+                    left={<TextInput.Icon icon="phone" color={colors.textLight} />}
+                  />
+                </View>
 
-            <Text style={styles.label}>Address</Text>
-            <TextInput
-              value={address}
-              onChangeText={setAddress}
-              mode="outlined"
-              multiline
-              numberOfLines={2}
-              style={[styles.input, styles.textArea]}
-              outlineColor={colors.border}
-              activeOutlineColor={colors.primary}
-              placeholder="Your shipping address"
-              theme={{ roundness: borderRadius.md }}
-            />
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Address</Text>
+                  <TextInput
+                    value={address}
+                    onChangeText={setAddress}
+                    mode="outlined"
+                    multiline
+                    numberOfLines={3}
+                    style={[styles.input, styles.textArea]}
+                    outlineColor={colors.border}
+                    activeOutlineColor={colors.primary}
+                    placeholder="Your shipping address"
+                    placeholderTextColor={colors.textLight}
+                    theme={{ roundness: borderRadius.md, colors: { onSurface: colors.text, text: colors.text } }}
+                    contentStyle={{ color: colors.text }}
+                    left={<TextInput.Icon icon="map-marker" color={colors.textLight} />}
+                  />
+                </View>
 
-            <Text style={styles.requiredNote}>* Required fields</Text>
+                <Text style={styles.requiredNote}>* Required fields</Text>
 
-            <Button
-              mode="contained"
-              onPress={handleRegister}
-              loading={loading}
-              disabled={loading}
-              style={styles.button}
-              contentStyle={styles.buttonContent}
-              labelStyle={styles.buttonLabel}
-              buttonColor={colors.primary}
-            >
-              Create account
-            </Button>
+                <Button
+                  mode="contained"
+                  onPress={handleRegister}
+                  loading={loading}
+                  disabled={loading}
+                  style={styles.button}
+                  contentStyle={styles.buttonContent}
+                  labelStyle={styles.buttonLabel}
+                  buttonColor={colors.primary}
+                  textColor={colors.surface}
+                  icon="account-plus"
+                >
+                  Create account
+                </Button>
 
-            <View style={styles.loginContainer}>
-              <Text style={styles.loginText}>Already have an account? </Text>
-              <Button
-                mode="text"
-                onPress={() => navigation.goBack()}
-                labelStyle={styles.loginLink}
-                compact
-              >
-                Sign in
-              </Button>
-            </View>
-          </View>
+                <View style={styles.loginContainer}>
+                  <Text style={styles.loginText}>Already have an account? </Text>
+                  <Button
+                    mode="text"
+                    onPress={() => navigation.goBack()}
+                    labelStyle={styles.loginLink}
+                    compact
+                    textColor={colors.primary}
+                  >
+                    Sign in
+                  </Button>
+                </View>
+              </View>
+            </Surface>
+          </Animatable.View>
         </Animatable.View>
       </ScrollView>
 
@@ -257,79 +294,129 @@ const RegisterScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.background,
   },
   scrollView: {
     flexGrow: 1,
+    paddingVertical: spacing.sm,
   },
   content: {
-    padding: spacing.xl,
-    paddingTop: spacing.lg,
+    padding: spacing.md,
+    paddingTop: spacing.sm,
+  },
+  logoContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: spacing.xs,
+    alignSelf: 'center',
+    ...colors.shadowMedium,
+  },
+  logoEmoji: {
+    fontSize: 32,
   },
   header: {
-    marginBottom: spacing.xl,
+    marginBottom: spacing.sm,
+    alignItems: 'center',
   },
   title: {
-    ...typography.h1,
+    ...typography.h2,
     color: colors.text,
-    marginBottom: spacing.xs,
+    marginBottom: spacing.xs / 2,
+    textAlign: 'center',
+    fontWeight: '700',
+    fontSize: 22,
   },
   subtitle: {
     ...typography.body,
     color: colors.textSecondary,
+    textAlign: 'center',
+    fontSize: 13,
+    marginBottom: spacing.sm,
+  },
+  formContainer: {
+    borderRadius: borderRadius.lg,
+    backgroundColor: colors.surface,
+    padding: spacing.md,
+    ...colors.shadowMedium,
   },
   form: {
     width: '100%',
   },
+  inputGroup: {
+    marginBottom: spacing.xs,
+  },
   label: {
     ...typography.bodyMedium,
     color: colors.text,
-    marginBottom: spacing.sm,
-    marginTop: spacing.md,
+    marginBottom: spacing.xs / 2,
+    fontWeight: '600',
+    fontSize: 13,
   },
   required: {
     color: colors.error,
+    fontWeight: 'bold',
+    fontSize: 13,
   },
   input: {
     backgroundColor: colors.surface,
+    fontSize: 14,
+    marginBottom: 0,
+    color: colors.text,
   },
   textArea: {
-    minHeight: 80,
+    minHeight: 60,
+    maxHeight: 80,
   },
   requiredNote: {
     ...typography.caption,
     color: colors.textLight,
-    marginTop: spacing.md,
+    marginTop: spacing.xs,
+    marginBottom: spacing.xs,
     fontStyle: 'italic',
+    textAlign: 'center',
+    fontSize: 11,
   },
   button: {
-    marginTop: spacing.xl,
+    marginTop: spacing.sm,
     borderRadius: borderRadius.md,
     ...colors.shadowMedium,
+    elevation: 4,
+    alignSelf: 'stretch',
   },
   buttonContent: {
     paddingVertical: spacing.sm,
   },
   buttonLabel: {
     ...typography.bodyMedium,
-    fontSize: 16,
+    fontSize: 15,
+    fontWeight: '600',
+    letterSpacing: 0.3,
   },
   loginContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: spacing.xl,
+    marginTop: spacing.sm,
+    paddingTop: spacing.xs,
   },
   loginText: {
     ...typography.body,
     color: colors.textSecondary,
+    fontSize: 13,
   },
   loginLink: {
     ...typography.bodyMedium,
     color: colors.primary,
+    fontWeight: '600',
+    fontSize: 13,
   },
   snackbar: {
     backgroundColor: colors.error,
+    marginBottom: spacing.xl,
   },
 });
 

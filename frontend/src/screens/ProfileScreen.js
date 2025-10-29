@@ -115,7 +115,6 @@ const ProfileScreen = ({ navigation }) => {
         email: formData.email,
         phone: formData.phone,
         address: formData.address,
-        profileImage: profileImage
       });
       
       // Update local context
@@ -135,11 +134,6 @@ const ProfileScreen = ({ navigation }) => {
       phone: user.phone || '',
       address: user.address || ''
     });
-    if (user.profileImage) {
-      setProfileImage(user.profileImage);
-    } else {
-      setProfileImage(null);
-    }
     setIsEditing(false);
   };
 
