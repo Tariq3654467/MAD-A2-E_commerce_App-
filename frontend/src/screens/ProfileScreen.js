@@ -76,14 +76,44 @@ const ProfileScreen = ({ navigation }) => {
   };
 
   const handleLogout = async () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Logout', style: 'destructive', onPress: async () => await logout() }
-      ]
-    );
+    try {
+      // On web, skip Alert because confirm dialogs may not support multiple buttons
+      if (Platform.OS === 'web') {
+        await logout();
+        if (navigation && navigation.reset) {
+          navigation.reset({ index: 0, routes: [{ name: 'Auth', params: { screen: 'Login' } }] });
+        } else if (navigation && navigation.navigate) {
+          navigation.navigate('Auth', { screen: 'Login' });
+        }
+        return;
+      }
+
+      Alert.alert(
+        'Logout',
+        'Are you sure you want to logout?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { 
+            text: 'Logout', 
+            style: 'destructive', 
+            onPress: async () => {
+              try {
+                await logout();
+                if (navigation && navigation.reset) {
+                  navigation.reset({ index: 0, routes: [{ name: 'Auth', params: { screen: 'Login' } }] });
+                } else if (navigation && navigation.navigate) {
+                  navigation.navigate('Auth', { screen: 'Login' });
+                }
+              } catch (e) {
+                console.error('Logout failed:', e);
+              }
+            }
+          }
+        ]
+      );
+    } catch (e) {
+      console.error('Logout flow error:', e);
+    }
   };
 
   // Image picker functionality removed for simplicity
