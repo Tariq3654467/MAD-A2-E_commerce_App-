@@ -12,14 +12,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // MongoDB Connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce_App';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://janjuatariq7614_db_user:tyfrkGJP0uB9oaOz@coffee-shop.3xuvmty.mongodb.net/?appName=coffee-shop';
 
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('✅ MongoDB Connected Successfully'))
-.catch((err) => console.error('❌ MongoDB Connection Error:', err));
+  .then(() => console.log('✅ MongoDB Connected Successfully'))
+  .catch((err) => console.error('❌ MongoDB Connection Error:', err));
 
 // Import Routes
 const authRoutes = require('./routes/auth');
@@ -49,9 +49,6 @@ app.use((err, req, res, next) => {
 });
 
 // Start Server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📍 Server URL: http://localhost:${PORT}`);
-});
+module.exports = app;
+
 

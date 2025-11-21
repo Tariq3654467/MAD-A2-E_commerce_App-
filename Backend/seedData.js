@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Product = require('./models/Product');
 require('dotenv').config();
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce_App';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://janjuatariq7614_db_user:tyfrkGJP0uB9oaOz@coffee-shop.3xuvmty.mongodb.net/?appName=coffee-shop';
 
 const sampleProducts = [
   {
