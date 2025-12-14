@@ -6,7 +6,24 @@ const User = require('../models/User');
 // Register New User
 router.post('/register', async (req, res) => {
   try {
+    // Ensure MongoDB connection
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState === 0 || mongoose.connection.readyState === 3) {
+      const MONGODB_URI = process.env.MONGODB_URI;
+      if (!MONGODB_URI) {
+        return res.status(500).json({ error: 'Database configuration error' });
+      }
+      await mongoose.connect(MONGODB_URI, {
+        serverSelectionTimeoutMS: 10000,
+      });
+    }
+
     const { name, email, password, address, phone } = req.body;
+
+    // Validate required fields
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: 'Name, email, and password are required' });
+    }
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -19,16 +36,17 @@ router.post('/register', async (req, res) => {
       name,
       email,
       password,
-      address,
-      phone
+      address: address || '',
+      phone: phone || ''
     });
 
     await user.save();
 
     // Generate JWT token
+    const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key_here_change_in_production';
     const token = jwt.sign(
       { userId: user._id },
-      process.env.JWT_SECRET || 'your_jwt_secret_key_here_change_in_production',
+      JWT_SECRET,
       { expiresIn: '7d' }
     );
 
@@ -45,14 +63,44 @@ router.post('/register', async (req, res) => {
     });
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ error: 'Error registering user' });
+    
+    // Handle specific MongoDB errors
+    if (error.name === 'MongoServerError' && error.code === 11000) {
+      return res.status(400).json({ error: 'Email already registered' });
+    }
+    
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ error: error.message });
+    }
+    
+    res.status(500).json({ 
+      error: 'Error registering user',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
 
 // Login User
 router.post('/login', async (req, res) => {
   try {
+    // Ensure MongoDB connection
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState === 0 || mongoose.connection.readyState === 3) {
+      const MONGODB_URI = process.env.MONGODB_URI;
+      if (!MONGODB_URI) {
+        return res.status(500).json({ error: 'Database configuration error' });
+      }
+      await mongoose.connect(MONGODB_URI, {
+        serverSelectionTimeoutMS: 10000,
+      });
+    }
+
     const { email, password } = req.body;
+
+    // Validate required fields
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
 
     // Find user by email
     const user = await User.findOne({ email });
@@ -67,9 +115,10 @@ router.post('/login', async (req, res) => {
     }
 
     // Generate JWT token
+    const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key_here_change_in_production';
     const token = jwt.sign(
       { userId: user._id },
-      process.env.JWT_SECRET || 'your_jwt_secret_key_here_change_in_production',
+      JWT_SECRET,
       { expiresIn: '7d' }
     );
 
@@ -86,7 +135,16 @@ router.post('/login', async (req, res) => {
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ error: 'Error logging in' });
+    
+    // Handle MongoDB connection errors
+    if (error.name === 'MongooseError' || error.name === 'MongoNetworkError') {
+      return res.status(503).json({ error: 'Database connection error. Please try again.' });
+    }
+    
+    res.status(500).json({ 
+      error: 'Error logging in',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
 
