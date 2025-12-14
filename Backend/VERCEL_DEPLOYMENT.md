@@ -123,9 +123,36 @@ After deployment, your API will be available at:
 
    This will populate your database with sample products.
 
-### Option 2: Seed via API Endpoint (Alternative)
+### Option 2: Seed via API Endpoint (Recommended for Vercel)
 
-You can create a temporary seed endpoint in your backend for one-time seeding, then remove it after use.
+A secure seed endpoint is available at `/api/seed`. This is the easiest way to seed your database after Vercel deployment.
+
+1. **Set the seed secret key in Vercel:**
+   - Go to your Vercel project settings → Environment Variables
+   - Add: `SEED_SECRET_KEY` with a strong random string (e.g., `my-super-secret-seed-key-2024`)
+   - Redeploy your application
+
+2. **Call the seed endpoint:**
+   ```bash
+   curl -X POST https://commerce-app-ashy.vercel.app/api/seed \
+     -H "Content-Type: application/json" \
+     -H "x-seed-key: your-secret-key-here" \
+     -d '{"secretKey": "your-secret-key-here"}'
+   ```
+
+   Or use a tool like Postman:
+   - Method: POST
+   - URL: `https://commerce-app-ashy.vercel.app/api/seed`
+   - Headers: `x-seed-key: your-secret-key-here`
+   - Body (JSON): `{"secretKey": "your-secret-key-here"}`
+
+3. **Verify seeding:**
+   ```bash
+   curl https://commerce-app-ashy.vercel.app/api/products
+   ```
+   You should see an array of products.
+
+**Security Note:** The seed endpoint is protected by a secret key. Make sure to use a strong secret key and keep it secure. You can remove or disable this endpoint after seeding if desired.
 
 ## Testing the Deployment
 

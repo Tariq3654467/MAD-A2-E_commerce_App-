@@ -60,6 +60,7 @@ const cartRoutes = require('./routes/cart');
 const orderRoutes = require('./routes/orders');
 const userRoutes = require('./routes/user');
 const chatbotRoutes = require('./routes/chatbot');
+const seedRoutes = require('./routes/seed');
 
 // Use Routes
 app.use('/api/auth', authRoutes);
@@ -68,6 +69,7 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/chatbot', chatbotRoutes);
+app.use('/api', seedRoutes); // Seed endpoint (protected)
 
 // Root Route
 app.get('/', (req, res) => {

@@ -10,10 +10,10 @@ import { Platform } from 'react-native';
 
 const getApiUrl = () => {
   // Production Vercel URL
-  const VERCEL_URL = 'https://mad-a2-e-commerce-app.vercel.app/api';
+  const VERCEL_URL = 'https://commerce-app-ashy.vercel.app/api';
   
   // 🔥 For local development, set USE_LOCAL to true
-  const USE_LOCAL = true; // Set to false for production
+  const USE_LOCAL = false; // Set to true for local development, false for production
   
   if (USE_LOCAL) {
     if (Platform.OS === 'web') {
