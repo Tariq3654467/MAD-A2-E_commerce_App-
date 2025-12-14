@@ -12,17 +12,28 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // MongoDB Connection
+// Use default database (no /ecommerce) to match where data was seeded
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://janjuatariq7614_db_user:tyfrkGJP0uB9oaOz@coffee-shop.3xuvmty.mongodb.net/?appName=coffee-shop';
 
-// Optimize for serverless - reuse connection if available
-if (!mongoose.connection.readyState) {
-  mongoose.connect(MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-    .then(() => console.log('✅ MongoDB Connected Successfully'))
-    .catch((err) => console.error('❌ MongoDB Connection Error:', err));
-}
+// MongoDB Connection Function
+const connectDB = async () => {
+  try {
+    if (mongoose.connection.readyState === 0) {
+      await mongoose.connect(MONGODB_URI, {
+        serverSelectionTimeoutMS: 10000, // 10 seconds timeout
+      });
+      console.log('✅ MongoDB Connected Successfully');
+      return true;
+    } else if (mongoose.connection.readyState === 1) {
+      console.log('✅ MongoDB Already Connected');
+      return true;
+    }
+    return false;
+  } catch (err) {
+    console.error('❌ MongoDB Connection Error:', err);
+    throw err; // Throw error so server doesn't start without DB
+  }
+};
 
 // Import Routes
 const authRoutes = require('./routes/auth');
@@ -53,5 +64,6 @@ app.use((err, req, res, next) => {
 
 // Start Server
 module.exports = app;
+module.exports.connectDB = connectDB;
 
 

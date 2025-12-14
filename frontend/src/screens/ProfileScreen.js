@@ -80,10 +80,21 @@ const ProfileScreen = ({ navigation }) => {
       // On web, skip Alert because confirm dialogs may not support multiple buttons
       if (Platform.OS === 'web') {
         await logout();
-        if (navigation && navigation.reset) {
-          navigation.reset({ index: 0, routes: [{ name: 'Auth', params: { screen: 'Login' } }] });
-        } else if (navigation && navigation.navigate) {
-          navigation.navigate('Auth', { screen: 'Login' });
+        // Navigate to root Auth stack
+        const rootNavigation = navigation.getParent()?.getParent();
+        if (rootNavigation) {
+          rootNavigation.reset({
+            index: 0,
+            routes: [{ name: 'Auth', params: { screen: 'Login' } }],
+          });
+        } else if (navigation.getParent) {
+          const parent = navigation.getParent();
+          if (parent) {
+            parent.reset({
+              index: 0,
+              routes: [{ name: 'Auth', params: { screen: 'Login' } }],
+            });
+          }
         }
         return;
       }
@@ -99,10 +110,21 @@ const ProfileScreen = ({ navigation }) => {
             onPress: async () => {
               try {
                 await logout();
-                if (navigation && navigation.reset) {
-                  navigation.reset({ index: 0, routes: [{ name: 'Auth', params: { screen: 'Login' } }] });
-                } else if (navigation && navigation.navigate) {
-                  navigation.navigate('Auth', { screen: 'Login' });
+                // Navigate to root Auth stack
+                const rootNavigation = navigation.getParent()?.getParent();
+                if (rootNavigation) {
+                  rootNavigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Auth', params: { screen: 'Login' } }],
+                  });
+                } else if (navigation.getParent) {
+                  const parent = navigation.getParent();
+                  if (parent) {
+                    parent.reset({
+                      index: 0,
+                      routes: [{ name: 'Auth', params: { screen: 'Login' } }],
+                    });
+                  }
                 }
               } catch (e) {
                 console.error('Logout failed:', e);
@@ -412,7 +434,10 @@ const ProfileScreen = ({ navigation }) => {
                 <TouchableOpacity 
                   key={order._id}
                   style={styles.orderCard}
-                  onPress={() => {}}
+                  onPress={() => {
+                    // Navigate to order details if needed
+                    // navigation.navigate('OrderDetails', { orderId: order._id });
+                  }}
                   activeOpacity={0.7}
                 >
                   <View style={styles.orderHeader}>

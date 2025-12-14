@@ -15,6 +15,7 @@ import {
   Avatar,
   ActivityIndicator,
   FAB,
+  IconButton,
 } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -216,13 +217,16 @@ const ChatbotScreen = ({ onClose }) => {
             <Text style={styles.headerSubtitle}>I'm here to help you shop!</Text>
           </View>
           {onClose && (
-            <FAB
-              style={styles.closeButton}
+            <IconButton
               icon="close"
-              size="small"
-              onPress={onClose}
-              color={colors.surface}
-              backgroundColor="rgba(255,255,255,0.2)"
+              size={24}
+              iconColor={colors.surface}
+              style={styles.closeButton}
+              onPress={() => {
+                if (onClose && typeof onClose === 'function') {
+                  onClose();
+                }
+              }}
             />
           )}
         </View>
@@ -303,7 +307,6 @@ const styles = StyleSheet.create({
   },
   headerText: {
     flex: 1,
-    alignItems: 'center',
   },
   headerTitle: {
     fontSize: 24,
@@ -317,8 +320,8 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   closeButton: {
-    elevation: 0,
-    shadowOpacity: 0,
+    margin: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
   },
   messagesContainer: {
     flex: 1,

@@ -40,7 +40,15 @@ const CategoryFilterScreen = ({ navigation }) => {
       minRating: minRating,
     };
     
-    navigation.navigate('Home', { filters });
+    // Navigate back to Home screen
+    navigation.goBack();
+    // If we're in a tab navigator, we can also navigate to Home tab
+    if (navigation.getParent) {
+      const parent = navigation.getParent();
+      if (parent) {
+        parent.navigate('Home');
+      }
+    }
   };
 
   const handleResetFilters = () => {
@@ -94,8 +102,9 @@ const CategoryFilterScreen = ({ navigation }) => {
                   >
                     <Checkbox
                       status={selectedCategories.includes(category) ? 'checked' : 'unchecked'}
-                      onPress={() => toggleCategory(category)}
+                      onPress={() => {}}
                       color={colors.primary}
+                      uncheckedColor={colors.border}
                     />
                     <Text style={[
                       styles.categoryLabel,

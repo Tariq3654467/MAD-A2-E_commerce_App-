@@ -41,7 +41,17 @@ const CartScreen = ({ navigation }) => {
           <Text style={styles.emptyText}>Add some products to get started</Text>
           <Button
             mode="contained"
-            onPress={() => navigation.navigate('Home')}
+            onPress={() => {
+              // Navigate to Home tab
+              if (navigation.getParent) {
+                const parent = navigation.getParent();
+                if (parent) {
+                  parent.navigate('Home');
+                }
+              } else {
+                navigation.navigate('Home');
+              }
+            }}
             style={styles.actionButton}
             contentStyle={styles.actionButtonContent}
             labelStyle={styles.actionButtonLabel}
@@ -184,7 +194,11 @@ const CartScreen = ({ navigation }) => {
           </View>
           <Button
             mode="contained"
-            onPress={() => navigation.navigate('Checkout', { total })}
+            onPress={() => {
+              if (navigation && navigation.navigate) {
+                navigation.navigate('Checkout', { total });
+              }
+            }}
             style={styles.checkoutButton}
             contentStyle={styles.checkoutButtonContent}
             labelStyle={styles.checkoutButtonLabel}

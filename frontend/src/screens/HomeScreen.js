@@ -30,10 +30,21 @@ const HomeScreen = ({ navigation }) => {
     try {
       setLoading(true);
       const data = await productAPI.getAll();
+      console.log('Products fetched:', data);
+      // Ensure data is an array
+      if (Array.isArray(data)) {
       setProducts(data);
       setFilteredProducts(data);
+      } else {
+        console.error('Products data is not an array:', data);
+        setProducts([]);
+        setFilteredProducts([]);
+      }
     } catch (error) {
       console.error('Error fetching products:', error);
+      console.error('Error details:', error.response?.data || error.message);
+      setProducts([]);
+      setFilteredProducts([]);
     } finally {
       setLoading(false);
       setRefreshing(false);

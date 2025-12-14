@@ -236,7 +236,9 @@ const ProductDetailsScreen = ({ route, navigation }) => {
         style={styles.snackbar}
         action={{
           label: 'View Cart',
-          onPress: () => navigation.navigate('Main', { screen: 'Cart' }),
+          onPress: () => {
+            navigation.navigate('Main', { screen: 'Cart' });
+          },
           labelStyle: { color: colors.surface },
         }}
       >
@@ -518,12 +520,6 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     ...colors.shadowMedium,
   },
-  addToCartButton: {
-    borderRadius: borderRadius.md,
-    marginLeft: spacing.md,
-    ...colors.shadowMedium,
-    elevation: 4,
-  },
   footerContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -545,6 +541,8 @@ const styles = StyleSheet.create({
   addToCartButton: {
     borderRadius: borderRadius.md,
     marginLeft: spacing.md,
+    ...colors.shadowMedium,
+    elevation: 4,
   },
   addToCartButtonContent: {
     paddingHorizontal: spacing.md,

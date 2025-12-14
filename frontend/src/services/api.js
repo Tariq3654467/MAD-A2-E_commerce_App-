@@ -1,38 +1,37 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// ⚠️ IMPORTANT: Update this to your actual backend URL
-// For Android emulator: http://10.0.2.2:3000/api
-// For iOS simulator: http://localhost:3000/api
-// For Web browser: http://localhost:3000/api
-// For physical device: http://YOUR_IP_ADDRESS:3000/api (find IP with: ipconfig or ifconfig)
-// For Snack Expo: Use ngrok URL (e.g., https://abc123.ngrok.io/api)
+// ⚠️ IMPORTANT: Backend API URL
+// Production: Vercel deployment
+// For local development, uncomment and use localhost URLs below
 
 // Automatically detect platform
 import { Platform } from 'react-native';
 
 const getApiUrl = () => {
-  // 🔥 Optional: set only for mobile if you are tunneling
-  const NGROK_URL = '';// e.g. 'https://xxxx.ngrok-free.app/api' (will NOT be used on web)
-
-  // Always use localhost on web
-  if (Platform.OS === 'web') {
-    return 'http://localhost:3000/api';
+  // Production Vercel URL
+  const VERCEL_URL = 'https://mad-a2-e-commerce-app.vercel.app/api';
+  
+  // 🔥 For local development, set USE_LOCAL to true
+  const USE_LOCAL = true; // Set to false for production
+  
+  if (USE_LOCAL) {
+    if (Platform.OS === 'web') {
+      return 'http://localhost:3000/api';
+    }
+    if (Platform.OS === 'android') {
+      return 'http://10.0.2.2:3000/api'; // Android emulator
+    }
+    if (Platform.OS === 'ios') {
+      return 'http://localhost:3000/api'; // iOS simulator
+    }
+    // For physical device, replace with your computer's IP address
+    // Find IP: Windows (ipconfig) or Mac/Linux (ifconfig)
+    return 'http://localhost:3000/api'; // Default fallback
   }
-
-  // For native (android/ios), prefer ngrok if provided
-  if (NGROK_URL && NGROK_URL.startsWith('https://')) {
-    return NGROK_URL;
-  }
-
-  // Local development URLs for native
-  if (Platform.OS === 'android') {
-    return 'http://192.168.1.104:3000/api';
-  }
-  if (Platform.OS === 'ios') {
-    return 'http://localhost:3000/api';
-  }
-  return 'http://localhost:3000/api';
+  
+  // Use Vercel URL for all platforms (production)
+  return VERCEL_URL;
 };
 
 const API_URL = getApiUrl();
@@ -101,8 +100,15 @@ export const authAPI = {
 // Product APIs
 export const productAPI = {
   getAll: async (filters = {}) => {
-    const response = await api.get('/products', { params: filters });
-    return response.data;
+    try {
+      const response = await api.get('/products', { params: filters });
+      console.log('Products API Response:', response.data);
+      // Ensure we return an array
+      return Array.isArray(response.data) ? response.data : [];
+    } catch (error) {
+      console.error('Products API Error:', error.response?.data || error.message);
+      throw error;
+    }
   },
   getById: async (id) => {
     const response = await api.get(`/products/${id}`);
@@ -197,7 +203,9 @@ export const chatbotAPI = {
 // Test connection
 export const testConnection = async () => {
   try {
-    const response = await axios.get(API_URL.replace('/api', ''), { timeout: 5000 });
+    // Test the root endpoint (without /api)
+    const baseUrl = API_URL.replace('/api', '');
+    const response = await axios.get(baseUrl, { timeout: 10000 });
     return { success: true, data: response.data };
   } catch (error) {
     return { success: false, error: error.message };
