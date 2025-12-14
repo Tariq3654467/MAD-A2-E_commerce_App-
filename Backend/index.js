@@ -15,23 +15,41 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Use default database (no /ecommerce) to match where data was seeded
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://janjuatariq7614_db_user:tyfrkGJP0uB9oaOz@coffee-shop.3xuvmty.mongodb.net/?appName=coffee-shop';
 
-// MongoDB Connection Function
+// MongoDB Connection Function - Optimized for serverless
 const connectDB = async () => {
   try {
-    if (mongoose.connection.readyState === 0) {
+    // Check if already connected
+    if (mongoose.connection.readyState === 1) {
+      return true; // Already connected
+    }
+
+    // Check if connection is in progress
+    if (mongoose.connection.readyState === 2) {
+      // Wait for connection to complete
+      return new Promise((resolve, reject) => {
+        mongoose.connection.once('connected', () => resolve(true));
+        mongoose.connection.once('error', reject);
+        setTimeout(() => reject(new Error('Connection timeout')), 10000);
+      });
+    }
+
+    // Connect if not connected
+    if (mongoose.connection.readyState === 0 || mongoose.connection.readyState === 3) {
       await mongoose.connect(MONGODB_URI, {
-        serverSelectionTimeoutMS: 10000, // 10 seconds timeout
+        serverSelectionTimeoutMS: 10000,
+        socketTimeoutMS: 45000,
+        maxPoolSize: 10,
+        minPoolSize: 1,
       });
       console.log('✅ MongoDB Connected Successfully');
       return true;
-    } else if (mongoose.connection.readyState === 1) {
-      console.log('✅ MongoDB Already Connected');
-      return true;
     }
+
     return false;
   } catch (err) {
     console.error('❌ MongoDB Connection Error:', err);
-    throw err; // Throw error so server doesn't start without DB
+    // Don't throw in serverless - let routes handle it
+    return false;
   }
 };
 

@@ -189,7 +189,10 @@ const ChatbotScreen = ({ onClose }) => {
             ]}>
               {message.text}
             </Text>
-            <Text style={styles.timestamp}>
+            <Text style={[
+              styles.timestamp,
+              message.isBot ? styles.botTimestamp : styles.userTimestamp
+            ]}>
               {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </Text>
           </Card.Content>
@@ -264,15 +267,29 @@ const ChatbotScreen = ({ onClose }) => {
         <TextInput
           style={styles.textInput}
           placeholder="Ask me anything about our products..."
+          placeholderTextColor={colors.textLight}
           value={inputText}
           onChangeText={setInputText}
           multiline
           maxLength={500}
+          mode="outlined"
+          outlineColor={colors.border}
+          activeOutlineColor={colors.primary}
+          contentStyle={styles.textInputContent}
+          textColor={colors.text}
+          theme={{
+            colors: {
+              onSurface: colors.text,
+              text: colors.text,
+              placeholder: colors.textLight,
+            },
+          }}
           right={
             <TextInput.Icon
               icon="send"
               onPress={sendMessage}
               disabled={!inputText.trim() || isLoading}
+              iconColor={inputText.trim() && !isLoading ? colors.primary : colors.textLight}
             />
           }
         />
@@ -372,9 +389,15 @@ const styles = StyleSheet.create({
   },
   timestamp: {
     fontSize: 12,
-    color: colors.textLight,
     marginTop: 4,
     textAlign: 'right',
+  },
+  botTimestamp: {
+    color: colors.textLight,
+  },
+  userTimestamp: {
+    color: colors.surface,
+    opacity: 0.8,
   },
   botAvatar: {
     backgroundColor: colors.secondary,
@@ -405,12 +428,16 @@ const styles = StyleSheet.create({
     borderTopColor: colors.divider,
   },
   textInput: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.surface,
     borderRadius: 25,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
     fontSize: 16,
     maxHeight: 100,
+  },
+  textInputContent: {
+    color: colors.text,
+    fontSize: 16,
+    paddingHorizontal: 4,
+    paddingVertical: 8,
   },
   fab: {
     position: 'absolute',

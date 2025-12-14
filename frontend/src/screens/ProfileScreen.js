@@ -7,7 +7,8 @@ import {
   TouchableOpacity, 
   Alert,
   Image,
-  Dimensions 
+  Dimensions,
+  Platform
 } from 'react-native';
 import { 
   Text, 
@@ -61,9 +62,13 @@ const ProfileScreen = ({ navigation }) => {
     try {
       setLoading(true);
       const data = await orderAPI.getOrders();
-      setOrders(data);
+      setOrders(data || []);
     } catch (error) {
-      console.error('Error fetching orders:', error);
+      // Only log non-401 errors (401 is expected if user is not authenticated)
+      if (error.response?.status !== 401) {
+        console.error('Error fetching orders:', error);
+      }
+      setOrders([]);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -80,22 +85,7 @@ const ProfileScreen = ({ navigation }) => {
       // On web, skip Alert because confirm dialogs may not support multiple buttons
       if (Platform.OS === 'web') {
         await logout();
-        // Navigate to root Auth stack
-        const rootNavigation = navigation.getParent()?.getParent();
-        if (rootNavigation) {
-          rootNavigation.reset({
-            index: 0,
-            routes: [{ name: 'Auth', params: { screen: 'Login' } }],
-          });
-        } else if (navigation.getParent) {
-          const parent = navigation.getParent();
-          if (parent) {
-            parent.reset({
-              index: 0,
-              routes: [{ name: 'Auth', params: { screen: 'Login' } }],
-            });
-          }
-        }
+        // Navigation will be handled automatically by RootNavigator
         return;
       }
 
@@ -110,31 +100,19 @@ const ProfileScreen = ({ navigation }) => {
             onPress: async () => {
               try {
                 await logout();
-                // Navigate to root Auth stack
-                const rootNavigation = navigation.getParent()?.getParent();
-                if (rootNavigation) {
-                  rootNavigation.reset({
-                    index: 0,
-                    routes: [{ name: 'Auth', params: { screen: 'Login' } }],
-                  });
-                } else if (navigation.getParent) {
-                  const parent = navigation.getParent();
-                  if (parent) {
-                    parent.reset({
-                      index: 0,
-                      routes: [{ name: 'Auth', params: { screen: 'Login' } }],
-                    });
-                  }
-                }
+                // Navigation will be handled automatically by RootNavigator
               } catch (e) {
                 console.error('Logout failed:', e);
+                Alert.alert('Error', 'Failed to logout. Please try again.');
               }
             }
           }
-        ]
+        ],
+        { cancelable: true }
       );
     } catch (e) {
       console.error('Logout flow error:', e);
+      Alert.alert('Error', 'An error occurred during logout.');
     }
   };
 
@@ -461,7 +439,7 @@ const ProfileScreen = ({ navigation }) => {
               ))
             ) : (
               <View style={styles.noOrdersContainer}>
-                <IconButton icon="package-variant-outline" size={60} iconColor={colors.textLight} />
+                <IconButton icon="package-variant" size={60} iconColor={colors.textLight} />
                 <Text style={styles.noOrdersText}>No orders yet</Text>
                 <Text style={styles.noOrdersSubtext}>Start shopping to place your first order</Text>
               </View>

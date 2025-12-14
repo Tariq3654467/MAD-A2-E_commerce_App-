@@ -5,16 +5,6 @@ const Product = require('../models/Product');
 // Get All Products
 router.get('/', async (req, res) => {
   try {
-    // Wait for MongoDB connection if not ready
-    const mongoose = require('mongoose');
-    if (mongoose.connection.readyState === 0 || mongoose.connection.readyState === 3) {
-      // Connection not ready, wait a bit and check again
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      if (mongoose.connection.readyState === 0 || mongoose.connection.readyState === 3) {
-        return res.status(503).json({ error: 'Database connection not ready. Please try again.' });
-      }
-    }
-
     const { category, minPrice, maxPrice, minRating, search } = req.query;
     
     let query = {};

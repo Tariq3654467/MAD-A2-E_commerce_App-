@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -234,8 +234,21 @@ const MainTabs = () => {
 };
 
 // Root Navigator
-const RootNavigator = () => {
+const RootNavigator = ({ navigationRef }) => {
   const { isAuthenticated, loading } = useContext(AuthContext);
+  const prevAuthRef = useRef(isAuthenticated);
+
+  // Reset navigation when authentication state changes from true to false (logout)
+  useEffect(() => {
+    if (!loading && navigationRef?.current && prevAuthRef.current && !isAuthenticated) {
+      // User logged out - reset to Auth stack
+      navigationRef.current.reset({
+        index: 0,
+        routes: [{ name: 'Auth', params: { screen: 'Login' } }],
+      });
+    }
+    prevAuthRef.current = isAuthenticated;
+  }, [isAuthenticated, loading]);
 
   if (loading) {
     return (
@@ -262,9 +275,11 @@ const RootNavigator = () => {
 };
 
 const AppNavigator = () => {
+  const navigationRef = useRef(null);
+
   return (
-    <NavigationContainer>
-      <RootNavigator />
+    <NavigationContainer ref={navigationRef}>
+      <RootNavigator navigationRef={navigationRef} />
     </NavigationContainer>
   );
 };
